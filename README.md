@@ -221,7 +221,7 @@ baseline.
 |---|---|
 | Detection method | Isolation Forest |
 | Comparison baseline | 95th-percentile threshold |
-| Anomalies flagged | *fill in your number* |
+| Anomalies flagged | 9  (out of 6,918 test hours — 0.13 %) |
 | Alert frequency | Maximum 1 alert/hour |
 
 <!--  ADD IMAGE HERE: 3–5 anomaly plots from Phase 5 of the build (actual vs expected usage,

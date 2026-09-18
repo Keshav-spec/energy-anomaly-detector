@@ -1,0 +1,4 @@
+Method,Flags,Unique flags,Contextual anomalies caught
+Naive (>P95),346,338,No (pure magnitude)
+Isolation Forest,9,1,Yes (hour+day context)
+Overlap (both),8,8,—

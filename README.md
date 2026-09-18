@@ -1,67 +1,231 @@
-# AI-Based Energy Anomaly Detector
+<div align="center">
 
-**Project Focus**: Flag wasteful/abnormal electricity usage in homes or buildings near real-time  
-**UN Sustainable Development Goals (SDG)**:
-- **SDG 7**: Affordable & Clean Energy
-- **SDG 12**: Responsible Consumption & Production  
-**Internship Program**: 1M1B AI for Sustainability (IBM SkillsBuild & AICTE)
+# ⚡ Energy Anomaly Detector
+
+**AI-powered detection of wasteful and abnormal electricity usage — with real-time email alerts.**
+
+*Built for the 1M1B AI for Sustainability Virtual Internship (IBM SkillsBuild & AICTE) · Aligned with UN SDG 7 & SDG 12*
+
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-Isolation%20Forest-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
+[![SDG 7](https://img.shields.io/badge/SDG-7%20Clean%20Energy-FCC30B?style=for-the-badge)](https://sdgs.un.org/goals/goal7)
+[![SDG 12](https://img.shields.io/badge/SDG-12%20Responsible%20Consumption-BF8B2E?style=for-the-badge)](https://sdgs.un.org/goals/goal12)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+
+<!-- 📌 ADD IMAGE HERE: banner.png — a wide banner/hero image (1200x400px approx).
+     Could be a simple graphic combining a house/building icon + a power/lightning bolt + a graph line.
+     Save as: assets/banner.png and reference below -->
+<img src="assets/banner.png" alt="Energy Anomaly Detector banner" width="100%">
+
+</div>
 
 ---
 
-## Project Structure
+## 📖 Overview
+
+Household and building electricity usage often contains silent inefficiencies — appliances left on, faulty equipment drawing excess power, HVAC systems misbehaving — that go unnoticed for weeks and quietly inflate both bills and carbon footprint.
+
+**Energy Anomaly Detector** uses an unsupervised **Isolation Forest** model on hourly usage patterns (time-of-day and day-of-week aware) to flag abnormal consumption in near real-time, and pushes an **email alert** the moment an anomaly is detected — so the user can act on it immediately instead of discovering it on next month's bill.
+
+> Built as part of the **1M1B AI for Sustainability Virtual Internship**, in collaboration with **IBM SkillsBuild** and **AICTE**.
+
+---
+
+## ✨ Features
+
+- 🔍 **Context-aware anomaly detection** — compares usage against the expected pattern for that specific hour and day, not a flat average
+- 📊 **Feature-engineered pipeline** — hourly resampling, rolling-average baselines, time-based features
+- 📧 **Real-time email alerts** — automatic notification the moment an anomaly is flagged, with usage vs. expected values in the message
+- 🧩 **Modular alert system** — built to support additional channels (SMS, Home Assistant) via a single config flag
+- 🖼️ **Visual anomaly reports** — before/after usage plots for every flagged event
+- 🛡️ **Responsible AI by design** — transparent scoring, rate-limited alerts, no data leaves the local environment
+
+---
+
+<!-- 📌 ADD IMAGE HERE: demo.gif or screenshot.png — a screen recording (as GIF) or screenshot
+     showing the pipeline running in terminal AND the resulting email alert side by side.
+     Save as: assets/demo.gif -->
+## 🎬 Demo
+
+<div align="center">
+<img src="assets/demo.gif" alt="Pipeline running and email alert demo" width="85%">
+</div>
+
+---
+
+## 🏗️ Architecture
+
+<!-- 📌 ADD IMAGE HERE: architecture-diagram.png — the Mermaid flow diagram generated
+     via IBM Bob in Phase 4 of the build (Raw data → Preprocessing → Isolation Forest →
+     Flagged anomalies → Email alert). Export it as PNG/SVG.
+     Save as: assets/architecture-diagram.png -->
+<div align="center">
+<img src="assets/architecture-diagram.png" alt="Pipeline architecture diagram" width="90%">
+</div>
+
+```
+Raw smart-meter data
+        │
+        ▼
+Hourly resampling + feature engineering
+   (hour_of_day, day_of_week, rolling_mean_24h)
+        │
+        ▼
+   Isolation Forest model
+        │
+        ▼
+   Anomaly flagged? ──No──▶ Log normally
+        │
+       Yes
+        │
+        ▼
+   Email alert dispatched
+```
+
+---
+
+## 🧰 Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Language | Python 3.10+ |
+| Data handling | pandas, numpy |
+| Model | scikit-learn (Isolation Forest) |
+| Visualization | matplotlib, seaborn |
+| Alerts | smtplib (email) |
+| Dev workflow | IBM Bob (planning, code generation, diagrams) |
+| Dataset | UCI Individual Household Electric Power Consumption |
+
+---
+
+## 📂 Project Structure
 
 ```
 energy-anomaly-detector/
-├── data/              # Raw + processed dataset
-├── notebooks/         # Exploratory data analysis & experiments
-├── src/               # Core Python modules & anomaly detection scripts
-├── outputs/           # Visualization plots & flagged anomaly reports/logs
-├── requirements.txt   # Project dependencies
-└── README.md          # Project documentation
+├── assets/                  # images for this README
+│   ├── banner.png
+│   ├── demo.gif
+│   ├── architecture-diagram.png
+│   └── anomaly-plots/
+├── data/
+│   ├── raw/                 # original dataset
+│   └── processed/           # hourly_features.csv
+├── notebooks/
+│   └── 01_load_explore.ipynb
+├── outputs/                 # generated anomaly plots + logs
+├── src/
+│   ├── pipeline.py          # end-to-end run script
+│   ├── model.pkl            # trained Isolation Forest
+│   └── alerts.py            # email alert logic
+├── requirements.txt
+├── .env.example
+├── README.md
+└── LICENSE
 ```
 
 ---
 
-## Setup & Getting Started
+## ⚙️ Installation
 
-### 1. Create and Activate Virtual Environment
 ```bash
-# Windows
+# Clone the repo
+git clone https://github.com/Keshav-spec/energy-anomaly-detector.git
+cd energy-anomaly-detector
+
+# Set up virtual environment
 python -m venv venv
-venv\Scripts\activate
+source venv/bin/activate        # Windows: venv\Scripts\activate
 
-# Linux/macOS
-python3 -m venv venv
-source venv/bin/activate
-```
-
-### 2. Install Dependencies
-```bash
+# Install dependencies
 pip install -r requirements.txt
 ```
 
+### Configure email alerts
+
+Copy the example env file and fill in your credentials:
+
+```bash
+cp .env.example .env
+```
+
+```env
+ALERT_EMAIL=your_email@gmail.com
+ALERT_EMAIL_PASSWORD=your_gmail_app_password
+```
+
+> Use a [Gmail App Password](https://myaccount.google.com/apppasswords) — not your real account password.
+
 ---
 
-## Responsible AI
+## ▶️ Usage
 
-| Pillar | Position |
+```bash
+# Run the full pipeline: load data → detect anomalies → send alerts
+python src/pipeline.py
+```
+
+Flagged anomalies are:
+- Logged to `outputs/flagged_anomalies.csv`
+- Plotted to `outputs/anomaly-plots/`
+- Emailed immediately to the configured address
+
+---
+
+## 📈 Results
+
+<!-- 📌 ADD IMAGE HERE: 3–5 anomaly plots from Phase 5 of the build (actual vs expected usage,
+     with the anomaly highlighted). Save each as: assets/anomaly-plots/anomaly_1.png, anomaly_2.png, etc. -->
+<div align="center">
+<img src="assets/anomaly-plots/anomaly_1.png" alt="Example detected anomaly" width="80%">
+</div>
+
+| Metric | Value |
 |---|---|
-| **Fairness** | Trained on a single French household (UCI, 2006–2010). Usage patterns — peak hours, baseline load, seasonal swing — are household-specific. The model must be retrained on local historical data before deployment in a new household, climate, or occupancy context; applying it unchanged across demographics is a known limitation. |
-| **Transparency** | The Isolation Forest exposes a continuous **anomaly score** (scikit-learn `decision_function`) alongside its binary flag. This score is surfaced directly to the user rather than hidden behind a black-box verdict, allowing operators to understand *how* anomalous a flagged hour is and to calibrate their own alert threshold. |
-| **Ethics — Alert Fatigue** | Excessive false positives train users to ignore alerts, defeating the system's purpose. The `contamination` hyperparameter (default `0.02`) is the primary lever for controlling flag rate and must be validated against operational feedback. Context-aware flagging already reduces spurious alerts by ~97 % vs. a naive 95th-percentile threshold (see `outputs/plots/baseline_comparison.png`). |
-| **Privacy** | Energy consumption data reveals occupancy patterns and daily routines. As a design principle, inference should run **locally on the household's own device** — raw time-series must never be transmitted to a central server or pooled without explicit informed consent. Federated learning is the recommended path if cross-household improvement is ever needed. |
-
-> Full write-up: [`RESPONSIBLE_AI.md`](RESPONSIBLE_AI.md)
+| Detection method | Isolation Forest vs. naive 95th-percentile threshold |
+| Anomalies flagged (test period) | *fill in your number* |
+| False-positive mitigation | Alert rate-limited to 1/hour |
 
 ---
 
-## Roadmap / Phases
-- [x] **Phase 0**: Environment Setup & Project Directory Scaffolding
-- [x] **Phase 1**: Data Acquisition & Exploration (2.07M records, datetime indexed, 1-week normal usage plotted)
-- [x] **Phase 2**: Data Preprocessing & Feature Engineering (Hourly aggregation, linear gap interpolation, 24h rolling baseline, 80/20 chronological split)
-- [x] **Phase 3**: Anomaly Detection Modeling (Isolation Forest trained on 27,671 hours, serialized to `src/model.pkl`, anomalies detected on 6,918 test hours)
-- [x] **Phase 5**: Testing & Demo Output (5 labeled anomaly plots, naive-baseline comparison, `outputs/plots/`)
-- [x] **Phase 6**: Responsible AI Write-Up
-- [x] **Phase 7**: Deliverable Assembly (`deliverable/Energy_Anomaly_Detector.pptx`, 9 slides)
-- [x] **Feature**: Push Alert Integration (email via `smtplib`; opt-in `send_alerts=True` in `evaluate_anomalies`)
-- [ ] **Phase 4**: Evaluation, Threshold Tuning & Alerting System
+## 🛡️ Responsible AI Considerations
+
+- **Transparency** — every alert includes the model's anomaly score, not just a binary flag
+- **Fairness** — trained on a single household's data; usage patterns may not generalize across household sizes/climates without retraining
+- **Privacy** — all processing runs locally; no usage data is transmitted to a third party
+- **Alert fatigue mitigation** — notifications are rate-limited to avoid desensitizing the user during sustained anomalies
+
+---
+
+## 🎯 Impact
+
+Early detection of wasteful electricity usage helps households and buildings reduce both cost and carbon footprint, directly supporting **SDG 7 (Affordable & Clean Energy)** and **SDG 12 (Responsible Consumption & Production)**.
+
+---
+
+## 🗺️ Roadmap
+
+- [x] Isolation Forest anomaly detection
+- [x] Email alert integration
+- [ ] SMS alerts (Twilio)
+- [ ] Home Assistant notification integration
+- [ ] Multi-household / federated deployment
+
+---
+
+## 👤 Author
+
+**Keshav**
+B.Tech Computer Science (Data Science), VIT Chennai
+[GitHub](https://github.com/Keshav-spec)
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+<div align="center">
+
+*Built with 💡 for the 1M1B AI for Sustainability Virtual Internship*
+
+</div>

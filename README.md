@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ Energy Anomaly Detector
+#  Energy Anomaly Detector
 
 **AI-powered detection of wasteful and abnormal electricity usage — with real-time email alerts.**
 
@@ -12,79 +12,66 @@
 [![SDG 12](https://img.shields.io/badge/SDG-12%20Responsible%20Consumption-BF8B2E?style=for-the-badge)](https://sdgs.un.org/goals/goal12)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-<!-- 📌 ADD IMAGE HERE: banner.png — a wide banner/hero image (1200x400px approx).
+<!--  ADD IMAGE HERE: banner.png — a wide banner/hero image (1200x400px approx).
      Could be a simple graphic combining a house/building icon + a power/lightning bolt + a graph line.
      Save as: assets/banner.png and reference below -->
-<img src="assets/banner.png" alt="Energy Anomaly Detector banner" width="100%">
+
 
 </div>
 
 ---
 
-## 📖 Overview
+##  Overview
 
 Household and building electricity usage often contains silent inefficiencies — appliances left on, faulty equipment drawing excess power, HVAC systems misbehaving — that go unnoticed for weeks and quietly inflate both bills and carbon footprint.
 
 **Energy Anomaly Detector** uses an unsupervised **Isolation Forest** model on hourly usage patterns (time-of-day and day-of-week aware) to flag abnormal consumption in near real-time, and pushes an **email alert** the moment an anomaly is detected — so the user can act on it immediately instead of discovering it on next month's bill.
 
-> Built as part of the **1M1B AI for Sustainability Virtual Internship**, in collaboration with **IBM SkillsBuild** and **AICTE**.
-
----
-
-## ✨ Features
-
-- 🔍 **Context-aware anomaly detection** — compares usage against the expected pattern for that specific hour and day, not a flat average
-- 📊 **Feature-engineered pipeline** — hourly resampling, rolling-average baselines, time-based features
-- 📧 **Real-time email alerts** — automatic notification the moment an anomaly is flagged, with usage vs. expected values in the message
-- 🧩 **Modular alert system** — built to support additional channels (SMS, Home Assistant) via a single config flag
-- 🖼️ **Visual anomaly reports** — before/after usage plots for every flagged event
-- 🛡️ **Responsible AI by design** — transparent scoring, rate-limited alerts, no data leaves the local environment
-
----
-
-<!-- 📌 ADD IMAGE HERE: demo.gif or screenshot.png — a screen recording (as GIF) or screenshot
-     showing the pipeline running in terminal AND the resulting email alert side by side.
-     Save as: assets/demo.gif -->
-## 🎬 Demo
 
 <div align="center">
-<img src="assets/demo.gif" alt="Pipeline running and email alert demo" width="85%">
+<img src="outputs/plots/sample_week_usage.png" alt="Pipeline running and email alert demo" width="85%">
 </div>
 
 ---
 
-## 🏗️ Architecture
+##  Features
 
-<!-- 📌 ADD IMAGE HERE: architecture-diagram.png — the Mermaid flow diagram generated
+- **Context-aware anomaly detection** — compares usage against the expected pattern for that specific hour and day, not a flat average
+- **Feature-engineered pipeline** — hourly resampling, rolling-average baselines, time-based features
+- **Real-time email alerts** — automatic notification the moment an anomaly is flagged, with usage vs. expected values in the message
+- **Modular alert system** — built to support additional channels (SMS, Home Assistant) via a single config flag
+- **Visual anomaly reports** — before/after usage plots for every flagged event
+- **Responsible AI by design** — transparent scoring, rate-limited alerts, no data leaves the local environment
+
+<div align="center">
+<img src="outputs/plots/minute_vs_hourly_comparison.png" alt="Example detected anomaly" width="80%">
+</div>
+
+
+<!--  ADD IMAGE HERE: demo.gif or screenshot.png — a screen recording (as GIF) or screenshot
+     showing the pipeline running in terminal AND the resulting email alert side by side.
+     Save as: assets/demo.gif -->
+
+
+
+---
+
+##  Architecture
+
+<!--  ADD IMAGE HERE: architecture-diagram.png — the Mermaid flow diagram generated
      via IBM Bob in Phase 4 of the build (Raw data → Preprocessing → Isolation Forest →
      Flagged anomalies → Email alert). Export it as PNG/SVG.
      Save as: assets/architecture-diagram.png -->
 <div align="center">
-<img src="assets/architecture-diagram.png" alt="Pipeline architecture diagram" width="90%">
+<img src="outputs/plots/architectural dig.png"
+     alt="Pipeline architecture diagram"
+     width="55%">
 </div>
 
-```
-Raw smart-meter data
-        │
-        ▼
-Hourly resampling + feature engineering
-   (hour_of_day, day_of_week, rolling_mean_24h)
-        │
-        ▼
-   Isolation Forest model
-        │
-        ▼
-   Anomaly flagged? ──No──▶ Log normally
-        │
-       Yes
-        │
-        ▼
-   Email alert dispatched
-```
 
 ---
 
-## 🧰 Tech Stack
+##  Tech Stack
 
 | Layer | Technology |
 |---|---|
@@ -98,7 +85,7 @@ Hourly resampling + feature engineering
 
 ---
 
-## 📂 Project Structure
+##  Project Structure
 
 ```
 energy-anomaly-detector/
@@ -125,7 +112,7 @@ energy-anomaly-detector/
 
 ---
 
-## ⚙️ Installation
+##  Installation
 
 ```bash
 # Clone the repo
@@ -157,7 +144,7 @@ ALERT_EMAIL_PASSWORD=your_gmail_app_password
 
 ---
 
-## ▶️ Usage
+##  Usage
 
 ```bash
 # Run the full pipeline: load data → detect anomalies → send alerts
@@ -171,23 +158,85 @@ Flagged anomalies are:
 
 ---
 
-## 📈 Results
+## Results
 
-<!-- 📌 ADD IMAGE HERE: 3–5 anomaly plots from Phase 5 of the build (actual vs expected usage,
-     with the anomaly highlighted). Save each as: assets/anomaly-plots/anomaly_1.png, anomaly_2.png, etc. -->
+The detector was evaluated against a simple 95th-percentile usage threshold
+to compare contextual anomaly detection with a naive fixed-threshold method.
+
 <div align="center">
-<img src="assets/anomaly-plots/anomaly_1.png" alt="Example detected anomaly" width="80%">
+<img src="outputs/plots/baseline_comparison.png"
+     alt="Model versus naive threshold anomaly detection"
+     width="95%">
 </div>
+
+### Anomaly Score Distribution
+
+Isolation Forest decision-function scores provide a continuous measure of
+how unusual each observation is.
+
+<div align="center">
+<img src="outputs/plots/anomaly_score_distribution.png"
+     alt="Distribution of anomaly decision scores"
+     width="90%">
+</div>
+
+### Detected Anomalies
+
+The following examples show detected deviations from the 24-hour rolling
+baseline.
+
+<table>
+<tr>
+<td align="center">
+<img src="outputs/plots/anomaly_01_20100222_07.png" width="100%">
+<br><b>Anomaly #1</b>
+</td>
+<td align="center">
+<img src="outputs/plots/anomaly_02_20100221_11.png" width="100%">
+<br><b>Anomaly #2</b>
+</td>
+</tr>
+
+<tr>
+<td align="center">
+<img src="outputs/plots/anomaly_03_20100221_14.png" width="100%">
+<br><b>Anomaly #3</b>
+</td>
+<td align="center">
+<img src="outputs/plots/anomaly_04_20100221_15.png" width="100%">
+<br><b>Anomaly #4</b>
+</td>
+</tr>
+
+<tr>
+<td align="center">
+<img src="outputs/plots/anomaly_05_20100308_15.png" width="100%">
+<br><b>Anomaly #5</b>
+</td>
+<td></td>
+</tr>
+</table>
 
 | Metric | Value |
 |---|---|
-| Detection method | Isolation Forest vs. naive 95th-percentile threshold |
-| Anomalies flagged (test period) | *fill in your number* |
-| False-positive mitigation | Alert rate-limited to 1/hour |
+| Detection method | Isolation Forest |
+| Comparison baseline | 95th-percentile threshold |
+| Anomalies flagged | *fill in your number* |
+| Alert frequency | Maximum 1 alert/hour |
+
+<!--  ADD IMAGE HERE: 3–5 anomaly plots from Phase 5 of the build (actual vs expected usage,
+     with the anomaly highlighted). Save each as: assets/anomaly-plots/anomaly_1.png, anomaly_2.png, etc. -->
+<div align="center">
+<img src="outputs/plots/baseline_comparison.png" alt="Example detected anomaly" width="80%">
+</div>
+
+     
+
+
 
 ---
 
-## 🛡️ Responsible AI Considerations
+##  Responsible AI Considerations
 
 - **Transparency** — every alert includes the model's anomaly score, not just a binary flag
 - **Fairness** — trained on a single household's data; usage patterns may not generalize across household sizes/climates without retraining
@@ -196,36 +245,19 @@ Flagged anomalies are:
 
 ---
 
-## 🎯 Impact
+##  Impact
 
 Early detection of wasteful electricity usage helps households and buildings reduce both cost and carbon footprint, directly supporting **SDG 7 (Affordable & Clean Energy)** and **SDG 12 (Responsible Consumption & Production)**.
 
 ---
 
-## 🗺️ Roadmap
 
-- [x] Isolation Forest anomaly detection
-- [x] Email alert integration
-- [ ] SMS alerts (Twilio)
-- [ ] Home Assistant notification integration
-- [ ] Multi-household / federated deployment
 
 ---
 
-## 👤 Author
+##  Author
 
 **Keshav**
 B.Tech Computer Science (Data Science), VIT Chennai
 [GitHub](https://github.com/Keshav-spec)
 
----
-
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).
-
-<div align="center">
-
-*Built with 💡 for the 1M1B AI for Sustainability Virtual Internship*
-
-</div>

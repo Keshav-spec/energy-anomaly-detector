@@ -10,6 +10,8 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import IsolationForest
 
+from alerts import send_email_alert
+
 FEATURE_COLS = ["usage", "hour_of_day", "day_of_week", "rolling_mean_24h"]
 
 
@@ -74,12 +76,20 @@ def evaluate_anomalies(
     model: IsolationForest,
     eval_df: pd.DataFrame,
     features: list = None,
+    send_alerts: bool = False,
 ) -> Tuple[pd.DataFrame, Dict[str, float]]:
     """
     Runs anomaly detection inference and computes decision scores.
 
     -1 = Anomaly
      1 = Normal
+
+    Parameters
+    ----------
+    send_alerts : bool
+        When True, fire an email alert for every flagged anomaly via
+        send_email_alert().  Requires ALERT_EMAIL and ALERT_EMAIL_PASSWORD
+        environment variables to be set (see src/alerts.py).
     """
     if features is None:
         features = FEATURE_COLS
@@ -92,6 +102,18 @@ def evaluate_anomalies(
     # Decision function: lower score = more anomalous
     results_df["anomaly_score"] = model.decision_function(X)
     results_df["is_anomaly"] = results_df["anomaly_label"] == -1
+
+    # Fire push alerts for every flagged row (opt-in via send_alerts=True)
+    if send_alerts:
+        anomaly_rows = results_df[results_df["is_anomaly"]]
+        print(f"\n[alerts] Sending email alerts for {len(anomaly_rows)} anomaly(ies)...")
+        for ts, row in anomaly_rows.iterrows():
+            send_email_alert(
+                anomaly_time=ts,
+                usage_value=row["usage"],
+                expected_value=row["rolling_mean_24h"],
+                anomaly_score=row["anomaly_score"],
+            )
 
     total = len(results_df)
     anomalies = int(results_df["is_anomaly"].sum())

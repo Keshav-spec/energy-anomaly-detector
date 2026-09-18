@@ -62,4 +62,6 @@ pip install -r requirements.txt
 - [x] **Phase 3**: Anomaly Detection Modeling (Isolation Forest trained on 27,671 hours, serialized to `src/model.pkl`, anomalies detected on 6,918 test hours)
 - [x] **Phase 5**: Testing & Demo Output (5 labeled anomaly plots, naive-baseline comparison, `outputs/plots/`)
 - [x] **Phase 6**: Responsible AI Write-Up
+- [x] **Phase 7**: Deliverable Assembly (`deliverable/Energy_Anomaly_Detector.pptx`, 9 slides)
+- [x] **Feature**: Push Alert Integration (email via `smtplib`; opt-in `send_alerts=True` in `evaluate_anomalies`)
 - [ ] **Phase 4**: Evaluation, Threshold Tuning & Alerting System
